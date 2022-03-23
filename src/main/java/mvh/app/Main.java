@@ -28,19 +28,14 @@ public class Main extends Application {
         stage.setTitle("Monsters VS Heroes V1.0");
     }
 
-    public static File getFile(Stage stage){
-        FileChooser myFileChooser = new FileChooser();
-        File selectedFile = myFileChooser.showOpenDialog(stage);
-        return selectedFile;
-    }
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("Main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         //Students edit here to set up the scene
-        File worldFile = getFile(stage);
-        //World world = Reader.loadWorld(worldFile);
+
+        MainController appController = fxmlLoader.getController();
+        appController.setControllerStage(stage);
         stage.setScene(scene);
         setWindowTitle(stage);
         stage.show();
