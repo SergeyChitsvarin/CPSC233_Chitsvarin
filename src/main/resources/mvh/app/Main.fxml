@@ -21,15 +21,15 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="New" />
-                        <MenuItem mnemonicParsing="false" text="Open…" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
+<!--                        <MenuItem mnemonicParsing="false" text="New" />-->
+                        <MenuItem mnemonicParsing="false" text="Load" />
+<!--                        <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                        <MenuItem mnemonicParsing="false" text="Close" />-->
                         <MenuItem mnemonicParsing="false" text="Save" />
                         <MenuItem mnemonicParsing="false" text="Save As…" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Preferences…" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
+<!--                        <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                        <MenuItem mnemonicParsing="false" text="Preferences…" />-->
+<!--                        <SeparatorMenuItem mnemonicParsing="false" />-->
                         <MenuItem mnemonicParsing="false" text="Quit" />
                     </items>
                 </Menu>
