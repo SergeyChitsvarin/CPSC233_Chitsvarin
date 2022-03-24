@@ -20,6 +20,9 @@ public class MainController {
     @FXML
     private MenuItem loadButton;
 
+    @FXML
+    private MenuItem quitButton;
+
     /**
      * Setup the window state
      */
@@ -41,6 +44,13 @@ public class MainController {
 
                 int rows = worldFromFile.getRows();
                 System.out.println(rows);
+            }
+        });
+
+        quitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.exit(0);
             }
         });
     }
