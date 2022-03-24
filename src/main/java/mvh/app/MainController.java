@@ -63,6 +63,8 @@ public class MainController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 Alert aboutAlert = new Alert(Alert.AlertType.INFORMATION);
+                aboutAlert.setTitle("about");
+                aboutAlert.setContentText("Author: Sergey Chitsvarin \n Email: Sergey.chitsvarin@ucalgary.ca \n version: 1.0 \n This is a world editor for Monsters VS Heroes");
                 aboutAlert.showAndWait()
                         .filter(response -> response == ButtonType.OK);
             }
