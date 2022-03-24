@@ -20,7 +20,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="loadButton" mnemonicParsing="false" text="load" />
+                        <MenuItem fx:id="loadButton" mnemonicParsing="false" text="Load" />
                         <MenuItem mnemonicParsing="false" text="Save" />
                         <MenuItem mnemonicParsing="false" text="Save As…" />
                         <MenuItem fx:id="quitButton" mnemonicParsing="false" text="Quit" />
@@ -28,7 +28,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About Monsters VS Heroes V1.0" />
+                        <MenuItem fx:id="aboutAlert" mnemonicParsing="false" text="About Monsters VS Heroes V1.0" />
                     </items>
                 </Menu>
             </menus>

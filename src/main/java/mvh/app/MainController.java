@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,6 +18,9 @@ public class MainController {
 
     //Store the data of editor
     private World world;
+
+    @FXML
+    private MenuItem aboutAlert;
 
     @FXML
     private MenuItem loadButton;
@@ -51,6 +56,15 @@ public class MainController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 System.exit(0);
+            }
+        });
+
+        aboutAlert.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Alert aboutAlert = new Alert(Alert.AlertType.INFORMATION);
+                aboutAlert.showAndWait()
+                        .filter(response -> response == ButtonType.OK);
             }
         });
     }

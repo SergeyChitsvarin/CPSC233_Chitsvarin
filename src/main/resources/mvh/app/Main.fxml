@@ -28,7 +28,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About Monsters VS Heroes V1.0" />
+                        <MenuItem fx:id="aboutAlert" mnemonicParsing="false" text="About Monsters VS Heroes V1.0" />
                     </items>
                 </Menu>
             </menus>
