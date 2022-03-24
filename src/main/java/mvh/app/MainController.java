@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import mvh.util.Reader;
 import mvh.world.*;
@@ -33,11 +34,14 @@ public class MainController {
         loadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                World worldFromFile = Reader.getWorldFromFile(controllerStage);
+                FileChooser myFileChooser = new FileChooser();
+                File selectedFile = myFileChooser.showOpenDialog(controllerStage);
+
+                World worldFromFile = Reader.loadWorld(selectedFile);
+
                 int rows = worldFromFile.getRows();
                 System.out.println(rows);
             }
         });
     }
-
 }

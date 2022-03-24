@@ -113,23 +113,6 @@ public final class Reader {
         // default value for world
         return null;
     }
-
-    private static File getFile(Stage stage){
-        FileChooser myFileChooser = new FileChooser();
-        File selectedFile = myFileChooser.showOpenDialog(stage);
-
-        // String directoryString = myFileChooser.getInitialDirectory().toString();
-        // System.out.println(directoryString);
-
-        return selectedFile;
-    }
-
-    public static World getWorldFromFile(Stage stage){
-        File selectedFile = getFile(stage);
-        World worldFromFile = loadWorld(selectedFile);
-
-        return worldFromFile;
-    }
 }
 
 
