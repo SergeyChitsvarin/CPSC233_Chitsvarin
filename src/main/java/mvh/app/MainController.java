@@ -5,10 +5,15 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import mvh.enums.WeaponType;
 import mvh.util.Reader;
 import mvh.world.*;
 
@@ -20,10 +25,22 @@ public class MainController {
     private World world;
 
     @FXML
+    private MenuItem club;
+
+    @FXML
+    private MenuItem axe;
+
+    @FXML
+    private MenuItem sword;
+
+    @FXML
     private MenuItem aboutAlert;
 
     @FXML
     private Button createNewWorld;
+
+    @FXML
+    private RadioButton heroButton;
 
     @FXML
     private MenuItem loadButton;
@@ -36,6 +53,33 @@ public class MainController {
 
     @FXML
     private TextField columnsTextField;
+
+    @FXML
+    private TextField symbolTextField;
+
+    @FXML
+    private TextField healthTextField;
+
+    @FXML
+    private TextField weaponTextField;
+
+    @FXML
+    private TextField armourTextField;
+
+    @FXML
+    private RadioButton monsterButton;
+
+    @FXML
+    private TextField monsterHealthTextField;
+
+    @FXML
+    private TextField monsterSymbolTextField;
+
+    @FXML
+    private ComboBox weaponDropDownMenu;
+
+    @FXML
+    private GridPane worldGrid;
 
     /**
      * Setup the window state
@@ -74,11 +118,9 @@ public class MainController {
                 Alert aboutAlert = new Alert(Alert.AlertType.INFORMATION);
                 aboutAlert.setTitle("About");
                 aboutAlert.setContentText("Author: Sergey Chitsvarin \nEmail: Sergey.chitsvarin@ucalgary.ca \nVersion: 1.0 \nThis is a world editor for Monsters VS Heroes");
-                aboutAlert.showAndWait()
-                        .filter(response -> response == ButtonType.OK);
+                aboutAlert.showAndWait().filter(click -> click == ButtonType.OK);
             }
         });
-
 
         createNewWorld.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -86,12 +128,67 @@ public class MainController {
                 String askingRows = rowsTextField.getText();
                 String askingColumns = columnsTextField.getText();
 
-                System.out.println(askingRows + askingColumns);
                 int rowsInt = Integer.parseInt(askingRows);
                 int columnsInt = Integer.parseInt(askingColumns);
+                world = new World(rowsInt, columnsInt);
 
-                World myWorld = new World(rowsInt, columnsInt);
-                System.out.println(myWorld);
+
+                worldGrid.getChildren().clear();
+                for(int row = 0; row < rowsInt; row++) {
+                    for(int column = 0; column < columnsInt; column++) {
+                        if (world.getEntity(row, column) == null) {
+                            Button button = new Button(".");
+                            button.setPadding(new Insets(3));
+                            worldGrid.add(button, row, column);
+                        }
+//                        if (world.getEntity(row, column).equals()){
+//
+//                        }
+                    }
+                }
+
+                worldGrid.setHgap(3);
+                worldGrid.setVgap(3);
+
+            }
+        });
+
+
+        heroButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                String askingSymbol = symbolTextField.getText();
+                char symbolChar = askingSymbol.charAt(0);
+
+                String askingHealth = healthTextField.getText();
+                int healthInt = Integer.parseInt(askingHealth);
+
+                String askingWeaponStrength = weaponTextField.getText();
+                int weaponStrength = Integer.parseInt(askingWeaponStrength);
+
+                String askingArmourStrength = armourTextField.getText();
+                int armourStrength = Integer.parseInt(askingArmourStrength);
+                Entity hero = new Hero(healthInt, symbolChar, weaponStrength, armourStrength);
+                world.addEntity(0, 0, hero);
+                System.out.println("done");
+            }
+        });
+
+        monsterButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String askingSymbol = monsterSymbolTextField.getText();
+                char symbolChar = askingSymbol.charAt(0);
+
+                String askingHealth = monsterHealthTextField.getText();
+                int healthInt = Integer.parseInt(askingHealth);
+
+                String selected = weaponDropDownMenu.getAccessibleText();
+
+
+                Entity monster = new Monster(healthInt, symbolChar, null);
+                world.addEntity(0, 0, monster);
+                System.out.println("done");
             }
         });
     }

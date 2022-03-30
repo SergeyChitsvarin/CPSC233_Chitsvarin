@@ -1,8 +1,13 @@
 package mvh.app;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -10,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Random;
+
 
 public class Main extends Application {
 
@@ -31,6 +37,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("Main.fxml"));
+
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         //Students edit here to set up the scene
 
@@ -38,7 +45,14 @@ public class Main extends Application {
         appController.setControllerStage(stage);
         stage.setScene(scene);
         setWindowTitle(stage);
+
         stage.show();
+
+        Pane root = fxmlLoader.getRoot();
+        ComboBox weaponDropDownMenu = (ComboBox) root.lookup("#weaponDropDownMenu");
+        weaponDropDownMenu.getItems().add("Axe");
+        weaponDropDownMenu.getItems().add("Sword");
+        weaponDropDownMenu.getItems().add("Club");
 
     }
 }
