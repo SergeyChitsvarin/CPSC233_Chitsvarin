@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import mvh.enums.Symbol;
 import mvh.enums.WeaponType;
 import mvh.util.Reader;
 import mvh.world.*;
@@ -136,16 +137,19 @@ public class MainController {
                 worldGrid.getChildren().clear();
                 for(int row = 0; row < rowsInt; row++) {
                     for(int column = 0; column < columnsInt; column++) {
+                        Button button = null;
                         if (world.getEntity(row, column) == null) {
-                            Button button = new Button(".");
-                            button.setPadding(new Insets(3));
-                            worldGrid.add(button, row, column);
+                            button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
                         }
-//                        if (world.getEntity(row, column).equals()){
-//
-//                        }
+                        if (world.isHero(row, column) || world.isMonster(row, column)){
+                            button = new Button(String.valueOf(world.getEntity(row, column).getSymbol()));
+                        }
+
+                        button.setPadding(new Insets(3));
+                        worldGrid.add(button, row, column);
                     }
                 }
+
 
                 worldGrid.setHgap(3);
                 worldGrid.setVgap(3);
