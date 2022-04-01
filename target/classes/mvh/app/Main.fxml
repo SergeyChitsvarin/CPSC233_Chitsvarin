@@ -69,7 +69,6 @@
                   <TextField fx:id="monsterHealthTextField" layoutX="86.0" layoutY="340.0" />
                   <RadioButton fx:id="monsterButton" layoutX="86.0" layoutY="286.0" mnemonicParsing="false" />
                   <ComboBox fx:id="weaponDropDownMenu" layoutX="86.0" layoutY="369.0" prefWidth="150.0" />
-                  <Button fx:id="deleteEntityButton" layoutX="75.0" layoutY="448.0" mnemonicParsing="false" text="Delete Entity" />
                </children>
                 </AnchorPane>
                 <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -97,6 +96,7 @@
                     <children>
                         <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <TextArea fx:id="entityDetailsTextArea" layoutX="7.0" layoutY="41.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="deleteEntityButton" layoutX="68.0" layoutY="292.0" mnemonicParsing="false" text="Delete Entity" />
                     </children>
                 </AnchorPane>
             </items>

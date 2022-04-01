@@ -1,7 +1,6 @@
 package mvh.app;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
@@ -12,7 +11,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import mvh.enums.Symbol;
 import mvh.enums.WeaponType;
 import mvh.util.Reader;
@@ -26,6 +24,12 @@ public class MainController {
     private World world;
 
     private Entity entityToAdd = null;
+
+    private int rowOfItemToDelete = 0;
+
+    private int columnOfItemToDelete = 0;
+
+    private Button buttonOfItemToDelete = null;
 
     @FXML
     private Button deleteEntityButton;
@@ -141,8 +145,9 @@ public class MainController {
                 int columnsInt = Integer.parseInt(askingColumns);
                 world = new World(rowsInt, columnsInt);
 
-
+                disableDeleteAndClearDetails();
                 worldGrid.getChildren().clear();
+
                 for(int row = 0; row < rowsInt; row++) {
                     for(int column = 0; column < columnsInt; column++) {
                         Button button = null;
@@ -160,15 +165,29 @@ public class MainController {
                             public void handle(ActionEvent actionEvent) {
                                 Entity entityInButton = world.getEntity(rowInGrid, columnInGrid);
                                 if (world.isHero(rowInGrid, columnInGrid) || world.isMonster(rowInGrid, columnInGrid)){
-                                    entityDetailsTextArea.setText(entityInButton.toString());
+
+                                    prepareDeleteAndDetails(buttonInGrid, entityInButton, rowInGrid, columnInGrid);
+
+                                    return;
                                 }
 
-                                if (entityInButton == null){
+                                if ((entityInButton == null) && (entityToAdd != null)){
                                     world.addEntity(rowInGrid, columnInGrid, entityToAdd);
+
                                     String entitySymbol = Character.toString(entityToAdd.getSymbol());
                                     buttonInGrid.setText(entitySymbol);
-                                    entityDetailsTextArea.setText(entityToAdd.toString());
+
+                                    prepareDeleteAndDetails(buttonInGrid, entityToAdd, rowInGrid, columnInGrid);
+                                    clearHeroInputs();
+                                    clearMonsterInputs();
+
                                     entityToAdd = null;
+                                    return;
+                                }
+
+                                if ((entityInButton == null) && (entityToAdd == null)){
+                                    disableDeleteAndClearDetails();
+                                    return;
                                 }
                             }
                         });
@@ -184,30 +203,15 @@ public class MainController {
             }
         });
 
-//        deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                worldGrid.getChildren().removeAll();
-//                String askingRows = rowsTextField.getText();
-//                String askingColumns = columnsTextField.getText();
-//
-//                int rowsInt = Integer.parseInt(askingRows);
-//                int columnsInt = Integer.parseInt(askingColumns);
-//
-//                Button button = null;
-//                for(int row = 0; row < rowsInt; row++) {
-//                    for(int column = 0; column < columnsInt; column++) {
-//                        button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
-//
-//                        button.setPadding(new Insets(3));
-//                        worldGrid.add(button, row, column);
-//                    }
-//                }
-//                worldGrid.setHgap(3);
-//                worldGrid.setVgap(3);
-//                System.out.println("Entities cleared!!!!!!!!!");
-//            }
-//        });
+        deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                world.addEntity(rowOfItemToDelete, columnOfItemToDelete, null);
+                buttonOfItemToDelete.setText(String.valueOf(Symbol.FLOOR.getSymbol()));
+                disableDeleteAndClearDetails();
+
+            }
+        });
 
         heroButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -227,6 +231,7 @@ public class MainController {
                 Entity hero = new Hero(healthInt, symbolChar, weaponStrength, armourStrength);
                 entityToAdd = hero;
 
+                clearMonsterInputs();
             }
         });
 
@@ -245,7 +250,42 @@ public class MainController {
 
                 Entity monster = new Monster(healthInt, symbolChar, selectedWeapon);
                 entityToAdd = monster;
+
+                clearHeroInputs();
             }
         });
+    }
+    private void prepareDeleteAndDetails(Button myButton, Entity myEntity, int rowInGrid, int columnInGrid){
+        deleteEntityButton.setDisable(false);
+        entityDetailsTextArea.setText(myEntity.toString());
+
+        buttonOfItemToDelete = myButton;
+        rowOfItemToDelete = rowInGrid;
+        columnOfItemToDelete = columnInGrid;
+
+    }
+
+    private void disableDeleteAndClearDetails(){
+        deleteEntityButton.setDisable(true);
+        entityDetailsTextArea.setText("");
+
+        rowOfItemToDelete = 0;
+        columnOfItemToDelete = 0;
+        buttonOfItemToDelete = null;
+    }
+
+    private void clearMonsterInputs(){
+        monsterButton.setSelected(false);
+        monsterSymbolTextField.setText("");
+        monsterHealthTextField.setText("");
+        weaponDropDownMenu.setValue("");
+    }
+
+    private void clearHeroInputs(){
+        heroButton.setSelected(false);
+        symbolTextField.setText("");
+        healthTextField.setText("");
+        weaponTextField.setText("");
+        armourTextField.setText("");
     }
 }

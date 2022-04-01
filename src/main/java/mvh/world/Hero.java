@@ -74,6 +74,6 @@ public final class Hero extends Entity {
 
     @Override
     public String toString() {
-        return super.toString() + "\t" + weaponStrength + "\t" + armorStrength;
+        return super.toString() + "\n" + "WEAPON STRENGTH: " + weaponStrength + "\n" + "ARMOUR STRENGTH: " + armorStrength;
     }
 }

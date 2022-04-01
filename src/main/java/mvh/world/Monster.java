@@ -83,6 +83,6 @@ public final class Monster extends Entity {
 
     @Override
     public String toString() {
-        return super.toString() + "\t" + weaponType;
+        return super.toString() + "\n" + "WEAPON TYPE: " + weaponType;
     }
 }

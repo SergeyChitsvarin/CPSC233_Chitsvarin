@@ -172,7 +172,7 @@ public abstract class Entity {
      */
     @Override
     public String toString() {
-        return shortString() + "\t" + symbol + "\t" + health + "\t" + state;
+        return "ID: " + shortString() + "\n" + "SYMBOL: "+ symbol + "\n" + "HEALTH: " + health + "\n"+ "STATE: " + state;
     }
 
     /**
