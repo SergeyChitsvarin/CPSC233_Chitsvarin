@@ -187,10 +187,11 @@ public class MainController {
                 String askingHealth = monsterHealthTextField.getText();
                 int healthInt = Integer.parseInt(askingHealth);
 
-                String selected = weaponDropDownMenu.getAccessibleText();
+                Object selected = weaponDropDownMenu.getValue();
+                char selectedChar = selected.toString().charAt(0);
+                WeaponType selectedWeapon = WeaponType.getWeaponType(selectedChar);
 
-
-                Entity monster = new Monster(healthInt, symbolChar, null);
+                Entity monster = new Monster(healthInt, symbolChar, selectedWeapon);
                 world.addEntity(0, 0, monster);
                 System.out.println("done");
             }
