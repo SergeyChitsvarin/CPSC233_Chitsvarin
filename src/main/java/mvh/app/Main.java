@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -33,6 +34,11 @@ public class Main extends Application {
     public static void setWindowTitle(Stage stage){
         stage.setTitle("Monsters VS Heroes V1.0");
     }
+
+//    public static void EntityInfoHero(char symbol, int health, int weaponStrength, int armourStrength){
+//        String symbolString = Character.toString(symbol);
+//        TextField heroEntityDetails = new TextField("type: "+ symbolString+"\n");
+//    }
 
     @Override
     public void start(Stage stage) throws IOException {

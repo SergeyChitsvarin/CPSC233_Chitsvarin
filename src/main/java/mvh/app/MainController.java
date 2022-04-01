@@ -25,8 +25,13 @@ public class MainController {
     //Store the data of editor
     private World world;
 
+    private Entity entityToAdd = null;
+
     @FXML
     private Button deleteEntityButton;
+
+    @FXML
+    private TextArea entityDetailsTextArea;
 
     @FXML
     private MenuItem club;
@@ -147,7 +152,26 @@ public class MainController {
                         if (world.isHero(row, column) || world.isMonster(row, column)){
                             button = new Button(String.valueOf(world.getEntity(row, column).getSymbol()));
                         }
+                        final int rowInGrid = row;
+                        final int columnInGrid = column;
+                        final Button buttonInGrid = button;
+                        button.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                Entity entityInButton = world.getEntity(rowInGrid, columnInGrid);
+                                if (world.isHero(rowInGrid, columnInGrid) || world.isMonster(rowInGrid, columnInGrid)){
+                                    entityDetailsTextArea.setText(entityInButton.toString());
+                                }
 
+                                if (entityInButton == null){
+                                    world.addEntity(rowInGrid, columnInGrid, entityToAdd);
+                                    String entitySymbol = Character.toString(entityToAdd.getSymbol());
+                                    buttonInGrid.setText(entitySymbol);
+                                    entityDetailsTextArea.setText(entityToAdd.toString());
+                                    entityToAdd = null;
+                                }
+                            }
+                        });
                         button.setPadding(new Insets(3));
                         worldGrid.add(button, row, column);
                     }
@@ -160,33 +184,35 @@ public class MainController {
             }
         });
 
-        deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                String askingRows = rowsTextField.getText();
-                String askingColumns = columnsTextField.getText();
-
-                int rowsInt = Integer.parseInt(askingRows);
-                int columnsInt = Integer.parseInt(askingColumns);
-
-                Button button = null;
-                for(int row = 0; row < rowsInt; row++) {
-                    for(int column = 0; column < columnsInt; column++) {
-                        button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
-
-                        button.setPadding(new Insets(3));
-                        worldGrid.add(button, row, column);
-                    }
-                }
-                worldGrid.setHgap(3);
-                worldGrid.setVgap(3);
-                System.out.println("Entities cleared!!!!!!!!!");
-            }
-        });
+//        deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                worldGrid.getChildren().removeAll();
+//                String askingRows = rowsTextField.getText();
+//                String askingColumns = columnsTextField.getText();
+//
+//                int rowsInt = Integer.parseInt(askingRows);
+//                int columnsInt = Integer.parseInt(askingColumns);
+//
+//                Button button = null;
+//                for(int row = 0; row < rowsInt; row++) {
+//                    for(int column = 0; column < columnsInt; column++) {
+//                        button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
+//
+//                        button.setPadding(new Insets(3));
+//                        worldGrid.add(button, row, column);
+//                    }
+//                }
+//                worldGrid.setHgap(3);
+//                worldGrid.setVgap(3);
+//                System.out.println("Entities cleared!!!!!!!!!");
+//            }
+//        });
 
         heroButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+
                 String askingSymbol = symbolTextField.getText();
                 char symbolChar = askingSymbol.charAt(0);
 
@@ -199,8 +225,8 @@ public class MainController {
                 String askingArmourStrength = armourTextField.getText();
                 int armourStrength = Integer.parseInt(askingArmourStrength);
                 Entity hero = new Hero(healthInt, symbolChar, weaponStrength, armourStrength);
-                world.addEntity(0, 0, hero);
-                System.out.println("done");
+                entityToAdd = hero;
+
             }
         });
 
@@ -218,8 +244,7 @@ public class MainController {
                 WeaponType selectedWeapon = WeaponType.getWeaponType(selectedChar);
 
                 Entity monster = new Monster(healthInt, symbolChar, selectedWeapon);
-                world.addEntity(0, 0, monster);
-                System.out.println("done");
+                entityToAdd = monster;
             }
         });
     }
