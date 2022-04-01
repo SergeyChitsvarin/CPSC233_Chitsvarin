@@ -22,6 +22,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
+/**
+ * Name: Sergey Chitsvarin
+ * Date: 04/01/2022
+ * tutorial: T04
+ */
+
 public class MainController {
 
     //Store the data of editor
@@ -107,21 +113,31 @@ public class MainController {
 
     @FXML
     public void initialize() {
+        /**
+         * when load button is selected load a file from computer
+          */
 
         loadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
+                // storing selected file in variable
                 File selectedFile = getFileForReading();
+                // check if user clicked cancel button and does not want to load from file
                 if (selectedFile == null){
                     return;
                 }
 
+                // create new world using reader class
                 world = Reader.loadWorld(selectedFile);
+                // draw world in GUI
                 redrawWorld();
             }
         });
 
         /**
+         * when user clicks 'save as' button and chooses a file write the world onto that file in correct format
+         *
          * references:
          * saving to file: https://www.tutorialspoint.com/Java-Program-to-Append-Text-to-an-Existing-File
          */
@@ -131,61 +147,85 @@ public class MainController {
                 int rows = 0;
                 int columns = 0;
                 try {
+                    // get rows and columns from world
                     rows = world.getRows();
                     columns = world.getColumns();
 
                 }catch (NullPointerException error) {
+                    // if world was not created or loaded throw exception with message
                     setErrorStatus("Load or create world first");
                     return;
                 }
 
                 try {
+                    // get file to write in
                     File selectedFile = getFileForWriting();
-                    if (selectedFile == null){return;}
+
+                    // if no file was selected stop trying to save file
+                    if (selectedFile == null){
+                        return;
+                    }
+
+                    // create buffered writer and file writer
                     BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(selectedFile));
 
+                    // the first two lines of file are rows and columns on separate lines
                     bufferedWriter.write("" + rows);
                     bufferedWriter.newLine();
                     bufferedWriter.write("" + columns);
                     bufferedWriter.newLine();
 
+                    // loop through the rows and columns of world and type out their values with a comma in between
                     for(int row = 0; row < rows; row++) {
                         for (int column = 0; column < columns; column++) {
                             bufferedWriter.write(row + "," + column);
 
+                            // check if the position has a hero on it
                             if (world.isHero(row, column)){
+                                // assign hero to variable
                                 Hero myHero = (Hero) world.getEntity(row, column);
 
+                                // get information about the hero
                                 String heroSymbol = Character.toString(myHero.getSymbol());
                                 String heroHealth = String.valueOf(myHero.getHealth());
                                 String heroArmourStrength = String.valueOf(myHero.armorStrength());
                                 String heroAttackStrength = String.valueOf(myHero.weaponStrength());
 
+                                // write out the hero's information after it's position
                                 bufferedWriter.write(",HERO," + heroSymbol + "," + heroHealth + "," + heroAttackStrength + "," + heroArmourStrength);
                             }
 
+                            // check if the position has a monster on it
                             if (world.isMonster(row, column)){
+                                // assign Monster to variable
                                 Monster myMonster = (Monster) world.getEntity(row, column);
 
+                                // get information about the monster
                                 String monsterSymbol = Character.toString(myMonster.getSymbol());
                                 String monsterHealth = String.valueOf(myMonster.getHealth());
                                 String monsterWeaponType = String.valueOf(myMonster.getWeaponType());
 
+
+                                // write out the monster's information after it's position
                                 bufferedWriter.write(",MONSTER," + monsterSymbol + "," + monsterHealth + "," + monsterWeaponType.charAt(0));
                             }
+                            // go onto next line in file
                             bufferedWriter.newLine();
                         }
                     }
+                    // close the file
                     bufferedWriter.close();
-                    System.out.println("done!!!!");
 
                 } catch (Exception error) {
+                    // general exception for failing to save the file
                     setErrorStatus("Failed to 'Save as' file");
                 }
 
             }
         });
-
+        /**
+         * exit out of the GUI with status 0 when quit button is pressed
+         */
         quitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -193,20 +233,30 @@ public class MainController {
             }
         });
 
+        /**
+         * show user general information about the author and program when About menu button is pressed
+         */
         aboutAlert.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // create new alert
                 Alert aboutAlert = new Alert(Alert.AlertType.INFORMATION);
+                // set tittle of alert "About"
                 aboutAlert.setTitle("About");
+                // context of Alert is general information about the program and author
                 aboutAlert.setContentText("Author: Sergey Chitsvarin \nEmail: Sergey.chitsvarin@ucalgary.ca \nVersion: 1.0 \nThis is a world editor for Monsters VS Heroes");
+                // show button to exit the alert called "ok"
                 aboutAlert.showAndWait().filter(click -> click == ButtonType.OK);
             }
         });
 
+        /**
+         * create new world when createNewWorld button is pressed
+          */
         createNewWorld.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
+                // get rows and columns for the world and check if the input is valid Integers
                 String askingRows = rowsTextField.getText();
                 boolean askingRowsIsValid = integerIsValid(askingRows, "rows", "input");
                 if (askingRowsIsValid == false){
@@ -219,13 +269,17 @@ public class MainController {
                     return;
                 }
 
+                // convert row and column values from Strings to integers and create new world
                 int rowsInt = Integer.parseInt(askingRows);
                 int columnsInt = Integer.parseInt(askingColumns);
                 world = new World(rowsInt, columnsInt);
+                // draw new world in GUI
                 redrawWorld();
             }
         });
-
+        /**
+         *
+         */
         deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
