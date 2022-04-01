@@ -26,6 +26,9 @@ public class MainController {
     private World world;
 
     @FXML
+    private Button deleteEntityButton;
+
+    @FXML
     private MenuItem club;
 
     @FXML
@@ -157,6 +160,29 @@ public class MainController {
             }
         });
 
+        deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String askingRows = rowsTextField.getText();
+                String askingColumns = columnsTextField.getText();
+
+                int rowsInt = Integer.parseInt(askingRows);
+                int columnsInt = Integer.parseInt(askingColumns);
+
+                Button button = null;
+                for(int row = 0; row < rowsInt; row++) {
+                    for(int column = 0; column < columnsInt; column++) {
+                        button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
+
+                        button.setPadding(new Insets(3));
+                        worldGrid.add(button, row, column);
+                    }
+                }
+                worldGrid.setHgap(3);
+                worldGrid.setVgap(3);
+                System.out.println("Entities cleared!!!!!!!!!");
+            }
+        });
 
         heroButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
