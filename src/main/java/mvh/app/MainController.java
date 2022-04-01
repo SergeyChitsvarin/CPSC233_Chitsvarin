@@ -17,7 +17,10 @@ import mvh.enums.WeaponType;
 import mvh.util.Reader;
 import mvh.world.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 public class MainController {
 
@@ -56,6 +59,12 @@ public class MainController {
 
     @FXML
     private MenuItem quitButton;
+
+    @FXML
+    private MenuItem saveFile;
+
+    @FXML
+    private MenuItem saveAs;
 
     @FXML
     private TextField rowsTextField;
@@ -105,10 +114,83 @@ public class MainController {
         loadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                FileChooser myFileChooser = new FileChooser();
-                File selectedFile = myFileChooser.showOpenDialog(controllerStage);
+                File selectedFile = getFileForReading();
+                if (selectedFile == null){return;}
+
                 world = Reader.loadWorld(selectedFile);
                 redrawWorld();
+            }
+        });
+
+        saveFile.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("saving file!!!");
+
+            }
+        });
+        /**
+         * references:
+         * saving to file: https://www.tutorialspoint.com/Java-Program-to-Append-Text-to-an-Existing-File
+         */
+        saveAs.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int rows = 0;
+                int columns = 0;
+                try {
+                    rows = world.getRows();
+                    columns = world.getColumns();
+
+                }catch (NullPointerException error) {
+                    setErrorStatus("Load or create world first");
+                    return;
+                }
+
+                try {
+                    File selectedFile = getFileForWriting();
+                    if (selectedFile == null){return;}
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(selectedFile));
+
+                    bufferedWriter.write("" + rows);
+                    bufferedWriter.newLine();
+                    bufferedWriter.write("" + columns);
+                    bufferedWriter.newLine();
+
+                    for(int row = 0; row < rows; row++) {
+                        for (int column = 0; column < columns; column++) {
+                            bufferedWriter.write(row + "," + column);
+
+                            if (world.isHero(row, column)){
+                                Hero myHero = (Hero) world.getEntity(row, column);
+
+                                String heroSymbol = Character.toString(myHero.getSymbol());
+                                String heroHealth = String.valueOf(myHero.getHealth());
+                                String heroArmourStrength = String.valueOf(myHero.armorStrength());
+                                String heroAttackStrength = String.valueOf(myHero.weaponStrength());
+
+                                bufferedWriter.write(",HERO," + heroSymbol + "," + heroHealth + "," + heroAttackStrength + "," + heroArmourStrength);
+                            }
+
+                            if (world.isMonster(row, column)){
+                                Monster myMonster = (Monster) world.getEntity(row, column);
+
+                                String monsterSymbol = Character.toString(myMonster.getSymbol());
+                                String monsterHealth = String.valueOf(myMonster.getHealth());
+                                String monsterWeaponType = String.valueOf(myMonster.getWeaponType());
+
+                                bufferedWriter.write(",MONSTER," + monsterSymbol + "," + monsterHealth + "," + monsterWeaponType.charAt(0));
+                            }
+                            bufferedWriter.newLine();
+                        }
+                    }
+                    bufferedWriter.close();
+                    System.out.println("done!!!!");
+
+                } catch (Exception error) {
+                    setErrorStatus("Failed to 'Save as' file");
+                }
+
             }
         });
 
@@ -156,6 +238,9 @@ public class MainController {
             }
         });
 
+        /**
+         *
+         */
         heroButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -317,4 +402,17 @@ public class MainController {
         worldGrid.setVgap(3);
         setSuccessStatus("New World Created");
     }
+
+    private File getFileForReading(){
+        FileChooser myFileChooser = new FileChooser();
+        File selectedFile = myFileChooser.showOpenDialog(controllerStage);
+        return selectedFile;
+    }
+
+    private File getFileForWriting(){
+        FileChooser myFileChooser = new FileChooser();
+        File selectedFile = myFileChooser.showSaveDialog(controllerStage);
+        return selectedFile;
+    }
+
 }
