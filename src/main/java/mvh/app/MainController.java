@@ -30,8 +30,6 @@ public class MainController {
 
     private int columnOfItemToDelete = 0;
 
-    private Button buttonOfItemToDelete = null;
-
     @FXML
     private Button deleteEntityButton;
 
@@ -109,10 +107,8 @@ public class MainController {
             public void handle(ActionEvent event) {
                 FileChooser myFileChooser = new FileChooser();
                 File selectedFile = myFileChooser.showOpenDialog(controllerStage);
-
-                World worldFromFile = Reader.loadWorld(selectedFile);
-
-                int rows = worldFromFile.getRows();
+                world = Reader.loadWorld(selectedFile);
+                redrawWorld();
             }
         });
 
@@ -141,66 +137,10 @@ public class MainController {
 
                 int rowsInt = Integer.parseInt(askingRows);
                 int columnsInt = Integer.parseInt(askingColumns);
+
+
                 world = new World(rowsInt, columnsInt);
-                setSuccessStatus("New World Created");
-
-                disableDeleteAndClearDetails();
-                worldGrid.getChildren().clear();
-
-                for(int row = 0; row < rowsInt; row++) {
-                    for(int column = 0; column < columnsInt; column++) {
-                        Button button = null;
-                        if (world.getEntity(row, column) == null) {
-                            button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
-                        }
-                        if (world.isHero(row, column) || world.isMonster(row, column)){
-                            button = new Button(String.valueOf(world.getEntity(row, column).getSymbol()));
-                        }
-                        final int rowInGrid = row;
-                        final int columnInGrid = column;
-                        final Button buttonInGrid = button;
-                        button.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                Entity entityInButton = world.getEntity(rowInGrid, columnInGrid);
-                                if (world.isHero(rowInGrid, columnInGrid) || world.isMonster(rowInGrid, columnInGrid)){
-
-                                    prepareDeleteAndDetails(buttonInGrid, entityInButton, rowInGrid, columnInGrid);
-
-                                    return;
-                                }
-
-                                if ((entityInButton == null) && (entityToAdd != null)){
-                                    world.addEntity(rowInGrid, columnInGrid, entityToAdd);
-                                    String entityClass = entityToAdd.getClass().getSimpleName();
-                                    setSuccessStatus("Added New " + entityClass);
-
-                                    String entitySymbol = Character.toString(entityToAdd.getSymbol());
-                                    buttonInGrid.setText(entitySymbol);
-
-                                    prepareDeleteAndDetails(buttonInGrid, entityToAdd, rowInGrid, columnInGrid);
-                                    clearHeroInputs();
-                                    clearMonsterInputs();
-
-                                    entityToAdd = null;
-                                    return;
-                                }
-
-                                if ((entityInButton == null) && (entityToAdd == null)){
-                                    disableDeleteAndClearDetails();
-                                    return;
-                                }
-                            }
-                        });
-                        button.setPadding(new Insets(3));
-                        worldGrid.add(button, row, column);
-                    }
-                }
-
-
-                worldGrid.setHgap(3);
-                worldGrid.setVgap(3);
-
+                redrawWorld();
             }
         });
 
@@ -209,11 +149,10 @@ public class MainController {
             public void handle(ActionEvent actionEvent) {
                 String entityToBeDeleted = world.getEntity(rowOfItemToDelete, columnOfItemToDelete).getClass().getSimpleName();
                 world.addEntity(rowOfItemToDelete, columnOfItemToDelete, null);
-                buttonOfItemToDelete.setText(String.valueOf(Symbol.FLOOR.getSymbol()));
 
+                redrawWorld();
                 disableDeleteAndClearDetails();
                 setSuccessStatus(entityToBeDeleted + " deleted successfully");
-
             }
         });
 
@@ -275,7 +214,6 @@ public class MainController {
 
         entityDetailsTextArea.setText(sharedDetails + entityDetails);
 
-        buttonOfItemToDelete = myButton;
         rowOfItemToDelete = rowInGrid;
         columnOfItemToDelete = columnInGrid;
 
@@ -287,7 +225,6 @@ public class MainController {
 
         rowOfItemToDelete = 0;
         columnOfItemToDelete = 0;
-        buttonOfItemToDelete = null;
     }
 
     private void clearMonsterInputs(){
@@ -317,5 +254,67 @@ public class MainController {
 
     private void setInfoStatus(String message){
         rightStatus.setText(message);
+    }
+
+    private void redrawWorld(){
+       int rowsInt = world.getRows();
+       int columnsInt = world.getColumns();
+
+        disableDeleteAndClearDetails();
+        worldGrid.getChildren().clear();
+
+        for(int row = 0; row < rowsInt; row++) {
+            for(int column = 0; column < columnsInt; column++) {
+                Button button = null;
+                if (world.getEntity(row, column) == null) {
+                    button = new Button(String.valueOf(Symbol.FLOOR.getSymbol()));
+                }
+                if (world.isHero(row, column) || world.isMonster(row, column)){
+                    button = new Button(String.valueOf(world.getEntity(row, column).getSymbol()));
+                }
+                final int rowInGrid = row;
+                final int columnInGrid = column;
+                final Button buttonInGrid = button;
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Entity entityInButton = world.getEntity(rowInGrid, columnInGrid);
+                        if (world.isHero(rowInGrid, columnInGrid) || world.isMonster(rowInGrid, columnInGrid)){
+
+                            prepareDeleteAndDetails(buttonInGrid, entityInButton, rowInGrid, columnInGrid);
+
+                            return;
+                        }
+
+                        if ((entityInButton == null) && (entityToAdd != null)){
+                            world.addEntity(rowInGrid, columnInGrid, entityToAdd);
+                            String entityClass = entityToAdd.getClass().getSimpleName();
+                            setSuccessStatus("Added New " + entityClass);
+
+                            String entitySymbol = Character.toString(entityToAdd.getSymbol());
+                            buttonInGrid.setText(entitySymbol);
+
+                            prepareDeleteAndDetails(buttonInGrid, entityToAdd, rowInGrid, columnInGrid);
+                            clearHeroInputs();
+                            clearMonsterInputs();
+
+                            entityToAdd = null;
+                            return;
+                        }
+
+                        if ((entityInButton == null) && (entityToAdd == null)){
+                            disableDeleteAndClearDetails();
+                            return;
+                        }
+                    }
+                });
+                button.setPadding(new Insets(3));
+                worldGrid.add(button, row, column);
+            }
+        }
+
+        worldGrid.setHgap(3);
+        worldGrid.setVgap(3);
+        setSuccessStatus("New World Created");
     }
 }
