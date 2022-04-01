@@ -8,7 +8,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -439,12 +440,16 @@ public class MainController {
                     }
                 });
                 button.setPadding(new Insets(3));
+                button.setMinHeight(30.0);
+                button.setMinWidth(30.0);
                 worldGrid.add(button, row, column);
             }
         }
 
         worldGrid.setHgap(3);
         worldGrid.setVgap(3);
+        // reference: creating walls https://www.demo2s.com/java/javafx-gridpane-setborder-border-value.html
+        worldGrid.setBorder(new Border(new BorderStroke(Color.CADETBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(10))));
         setSuccessStatus("New World Created");
     }
 
