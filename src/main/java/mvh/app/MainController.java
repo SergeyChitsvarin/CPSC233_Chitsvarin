@@ -20,7 +20,6 @@ import mvh.world.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 
 public class MainController {
 
@@ -59,9 +58,6 @@ public class MainController {
 
     @FXML
     private MenuItem quitButton;
-
-    @FXML
-    private MenuItem saveFile;
 
     @FXML
     private MenuItem saveAs;
@@ -115,20 +111,15 @@ public class MainController {
             @Override
             public void handle(ActionEvent event) {
                 File selectedFile = getFileForReading();
-                if (selectedFile == null){return;}
+                if (selectedFile == null){
+                    return;
+                }
 
                 world = Reader.loadWorld(selectedFile);
                 redrawWorld();
             }
         });
 
-        saveFile.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("saving file!!!");
-
-            }
-        });
         /**
          * references:
          * saving to file: https://www.tutorialspoint.com/Java-Program-to-Append-Text-to-an-Existing-File
@@ -214,13 +205,21 @@ public class MainController {
         createNewWorld.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
                 String askingRows = rowsTextField.getText();
+                boolean askingRowsIsValid = integerIsValid(askingRows, "rows", "input");
+                if (askingRowsIsValid == false){
+                    return;
+                }
+
                 String askingColumns = columnsTextField.getText();
+                boolean askingColumnsIsValid = integerIsValid(askingRows, "columns", "input");
+                if (askingColumnsIsValid == false){
+                    return;
+                }
 
                 int rowsInt = Integer.parseInt(askingRows);
                 int columnsInt = Integer.parseInt(askingColumns);
-
-
                 world = new World(rowsInt, columnsInt);
                 redrawWorld();
             }
@@ -245,17 +244,42 @@ public class MainController {
             @Override
             public void handle(MouseEvent mouseEvent) {
 
-                String askingSymbol = symbolTextField.getText();
-                char symbolChar = askingSymbol.charAt(0);
+                String askingHeroSymbol = symbolTextField.getText();
+                boolean heroSymbolIsValid = symbolIsValid(askingHeroSymbol, Hero.class.getSimpleName());
+                if (heroSymbolIsValid == false) {
+                    heroButton.setSelected(false);
+                    return;
+                }
 
                 String askingHealth = healthTextField.getText();
-                int healthInt = Integer.parseInt(askingHealth);
+                boolean heroHealthIsValid = integerIsValid(askingHealth, Hero.class.getSimpleName(), "Health");
+                if (heroHealthIsValid == false){
+                    heroButton.setSelected(false);
+                    return;
+                }
 
                 String askingWeaponStrength = weaponTextField.getText();
-                int weaponStrength = Integer.parseInt(askingWeaponStrength);
+                boolean heroStrengthIsValid = integerIsValid(askingWeaponStrength, Hero.class.getSimpleName(), "Weapon Strength");
+                if (heroStrengthIsValid == false){
+                    heroButton.setSelected(false);
+                    return;
+                }
 
                 String askingArmourStrength = armourTextField.getText();
+                boolean heroArmourIsValid = integerIsValid(askingArmourStrength, Hero.class.getSimpleName(), "Armour Strength");
+                if (heroArmourIsValid == false){
+                    heroButton.setSelected(false);
+                    return;
+                }
+
+                setInfoStatus("Select position on grid");
+                setErrorStatus("");
+
+                char symbolChar = askingHeroSymbol.charAt(0);
+                int healthInt = Integer.parseInt(askingHealth);
+                int weaponStrength = Integer.parseInt(askingWeaponStrength);
                 int armourStrength = Integer.parseInt(askingArmourStrength);
+
                 Entity hero = new Hero(healthInt, symbolChar, weaponStrength, armourStrength);
                 entityToAdd = hero;
 
@@ -266,13 +290,33 @@ public class MainController {
         monsterButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                String askingSymbol = monsterSymbolTextField.getText();
-                char symbolChar = askingSymbol.charAt(0);
+
+                String askingMonsterSymbol = monsterSymbolTextField.getText();
+                boolean monsterSymbolIsValid = symbolIsValid(askingMonsterSymbol, Monster.class.getSimpleName());
+                if (monsterSymbolIsValid == false) {
+                    monsterButton.setSelected(false);
+                    return;
+                }
 
                 String askingHealth = monsterHealthTextField.getText();
-                int healthInt = Integer.parseInt(askingHealth);
+                boolean monsterHealthIsValid = integerIsValid(askingHealth, Monster.class.getSimpleName(), "health");
+                if (monsterHealthIsValid == false){
+                    monsterButton.setSelected(false);
+                    return;
+                }
 
                 Object selected = weaponDropDownMenu.getValue();
+                if (selected == null){
+                    setErrorStatus("select weapon type");
+                    monsterButton.setSelected(false);
+                    return;
+                }
+
+                setInfoStatus("Select position on grid");
+                setErrorStatus("");
+
+                char symbolChar = askingMonsterSymbol.charAt(0);
+                int healthInt = Integer.parseInt(askingHealth);
                 char selectedChar = selected.toString().charAt(0);
                 WeaponType selectedWeapon = WeaponType.getWeaponType(selectedChar);
 
@@ -301,6 +345,7 @@ public class MainController {
 
         rowOfItemToDelete = rowInGrid;
         columnOfItemToDelete = columnInGrid;
+        setInfoStatus("");
 
     }
 
@@ -413,6 +458,58 @@ public class MainController {
         FileChooser myFileChooser = new FileChooser();
         File selectedFile = myFileChooser.showSaveDialog(controllerStage);
         return selectedFile;
+    }
+
+    private boolean symbolIsValid(String askingHeroSymbol, String entityType){
+
+        if (askingHeroSymbol.equals("")){
+            setErrorStatus("Provide a " + entityType + " Symbol");
+            return false;
+        }
+
+        if (askingHeroSymbol.length() > 1){
+            setErrorStatus("Provide a " + entityType + " symbol with one character");
+            return false;
+        }
+
+        if ((askingHeroSymbol.equals(String.valueOf(Symbol.FLOOR.getSymbol()))) ||
+                (askingHeroSymbol.equals(String.valueOf(Symbol.WALL.getSymbol()))) ||
+                (askingHeroSymbol.equals(String.valueOf(Symbol.DEAD.getSymbol())))){
+            setErrorStatus("Do not use special characters for " + entityType + " symbol");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private boolean checkIfInt(String value){
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch(NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean integerIsValid(String askingInteger, String entityType, String valueName){
+
+        if (askingInteger.equals("")){
+            setErrorStatus("Provide a " + entityType + " " + valueName + " value");
+            return false;
+        }
+
+        if (checkIfInt(askingInteger) == false){
+            setErrorStatus("Provide an integer for " + entityType + " " +  valueName + " value");
+            return false;
+        }
+
+        if (Integer.parseInt(askingInteger) < 0){
+            setErrorStatus("Provide a positive value for " + entityType + " " +valueName + " value");
+            return false;
+        }
+
+       return true;
     }
 
 }
