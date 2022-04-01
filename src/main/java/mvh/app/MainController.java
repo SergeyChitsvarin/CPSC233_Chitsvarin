@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import mvh.enums.Symbol;
@@ -38,13 +39,10 @@ public class MainController {
     private TextArea entityDetailsTextArea;
 
     @FXML
-    private MenuItem club;
+    private Label leftStatus;
 
     @FXML
-    private MenuItem axe;
-
-    @FXML
-    private MenuItem sword;
+    private Label rightStatus;
 
     @FXML
     private MenuItem aboutAlert;
@@ -144,6 +142,7 @@ public class MainController {
                 int rowsInt = Integer.parseInt(askingRows);
                 int columnsInt = Integer.parseInt(askingColumns);
                 world = new World(rowsInt, columnsInt);
+                setSuccessStatus("New World Created");
 
                 disableDeleteAndClearDetails();
                 worldGrid.getChildren().clear();
@@ -173,6 +172,8 @@ public class MainController {
 
                                 if ((entityInButton == null) && (entityToAdd != null)){
                                     world.addEntity(rowInGrid, columnInGrid, entityToAdd);
+                                    String entityClass = entityToAdd.getClass().getSimpleName();
+                                    setSuccessStatus("Added New " + entityClass);
 
                                     String entitySymbol = Character.toString(entityToAdd.getSymbol());
                                     buttonInGrid.setText(entitySymbol);
@@ -206,9 +207,12 @@ public class MainController {
         deleteEntityButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                String entityToBeDeleted = world.getEntity(rowOfItemToDelete, columnOfItemToDelete).getClass().getSimpleName();
                 world.addEntity(rowOfItemToDelete, columnOfItemToDelete, null);
                 buttonOfItemToDelete.setText(String.valueOf(Symbol.FLOOR.getSymbol()));
+
                 disableDeleteAndClearDetails();
+                setSuccessStatus(entityToBeDeleted + " deleted successfully");
 
             }
         });
@@ -257,7 +261,19 @@ public class MainController {
     }
     private void prepareDeleteAndDetails(Button myButton, Entity myEntity, int rowInGrid, int columnInGrid){
         deleteEntityButton.setDisable(false);
-        entityDetailsTextArea.setText(myEntity.toString());
+
+        String sharedDetails = "ID: " + myEntity.shortString() + "\n" + "SYMBOL: "+ myEntity.getSymbol() + "\n" + "HEALTH: " + myEntity.getHealth() + "\n"+ "ALIVE: " + myEntity.isAlive();
+        String entityDetails = "";
+        if(myEntity instanceof Hero) {
+            Hero myHero = (Hero) myEntity;
+            entityDetails = "\n" + "WEAPON STRENGTH: " + myHero.weaponStrength() + "\n" + "ARMOUR STRENGTH: " + myHero.armorStrength();
+        }
+        if(myEntity instanceof Monster) {
+            Monster myMonster = (Monster) myEntity;
+            entityDetails = "\n" + "WEAPON TYPE: " + myMonster.getWeaponType();
+        }
+
+        entityDetailsTextArea.setText(sharedDetails + entityDetails);
 
         buttonOfItemToDelete = myButton;
         rowOfItemToDelete = rowInGrid;
@@ -287,5 +303,19 @@ public class MainController {
         healthTextField.setText("");
         weaponTextField.setText("");
         armourTextField.setText("");
+    }
+
+    private void setSuccessStatus(String message){
+        leftStatus.setTextFill(Paint.valueOf("green"));
+        leftStatus.setText(message);
+    }
+
+    private void setErrorStatus(String message){
+        leftStatus.setTextFill(Paint.valueOf("red"));
+        leftStatus.setText(message);
+    }
+
+    private void setInfoStatus(String message){
+        rightStatus.setText(message);
     }
 }
