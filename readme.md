@@ -90,5 +90,19 @@ And if the entity is a monster it will show the shared details and "Weapon Type.
 The "delete entity" button will be disabled until the user has an entity selected.
 In this case if the button is clicked the current entity selected will be deleted and replaced by
 a floor symbol in its previous place.
+______________________________________________________
+#To Run My GUI
+in terminal 
+
+```shell
+java --module-path "<path to javafx-sdk-18\lib>" --add-modules javafx.controls,javafx.fxml -jar CPSC233W22A3.jar
+```
+
+Example
+```shell
+java --module-path "C:\Users\serge\OneDrive\Desktop\University\2022
+\cpsc 233\assignment3\openjfx-18_windows-x64_bin-sdk\javafx-sdk-18\lib" --add-modules javafx.controls,javafx.fxml -jar CPSC233W22A3.jar
+```
+
 
 
